@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ECG Heart Classifier</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f6f8fa;
+      margin-top: 60px;
+    }
+    h2 {
+      color: #2c3e50;
+    }
+    input {
+      width: 350px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin: 10px 0;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    p {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h2>💓 ECG Heart Disease Classifier</h2>
+  <p>Enter comma-separated ECG features (e.g. 80, 120, 0.05, 0.3)</p>
+
+  <input id="input" placeholder="Enter HR, QRS, ST, QT">
+  <br>
+  <button onclick="predict()">Predict</button>
+  <p id="output"></p>
+
+  <script>
+    async function predict() {
+      const raw = document.getElementById('input').value;
+      const features = raw.split(',').map(x => parseFloat(x.trim()));
+
+      const res = await fetch('/predict', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({features})
+      });
+
+      const data = await res.json();
+      if (data.result) {
+        document.getElementById('output').innerText = 'Prediction: ' + data.result;
+      } else {
+        document.getElementById('output').innerText = 'Error: ' + data.error;
+      }
+    }
+  </script>
+</body>
+</html>
